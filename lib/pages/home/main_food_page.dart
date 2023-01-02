@@ -1,10 +1,13 @@
 // ignore_for_file: prefer_const_constructors, avoid_unnecessary_containers, implementation_imports, unnecessary_import
 
+// import 'dart:html';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter_application_1/colors.dart';
+import 'package:flutter_application_1/utils/colors.dart';
+import 'package:flutter_application_1/utils/dimensions.dart';
 import 'package:flutter_application_1/widgets/big_text.dart';
 import 'package:flutter_application_1/widgets/small_text.dart';
 
@@ -25,8 +28,10 @@ class _MainFoodPageState extends State<MainFoodPage> {
         children: [
           Container(
             child: Container(
-              margin: EdgeInsets.only(top: 45, bottom: 15),
-              padding: EdgeInsets.only(left: 20, right: 20),
+              margin: EdgeInsets.only(
+                  top: Dimesions.height45, bottom: Dimesions.height15),
+              padding: EdgeInsets.only(
+                  left: Dimesions.height20, right: Dimesions.height20),
               child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -49,21 +54,26 @@ class _MainFoodPageState extends State<MainFoodPage> {
                       ],
                     ),
                     Container(
-                      width: 45,
-                      height: 45,
+                      width: Dimesions.height45,
+                      height: Dimesions.height45,
                       // ignore: sort_child_properties_last
                       child: Icon(
                         Icons.search,
+                        size: Dimesions.icon24,
                         color: Colors.white,
                       ),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius:
+                              BorderRadius.circular(Dimesions.radius15),
                           color: AppColors.mainColor),
                     ),
                   ]),
             ),
           ),
-          FoodPageBody(),
+          Expanded(
+              child: SingleChildScrollView(
+            child: FoodPageBody(),
+          )),
         ],
       ),
     );
