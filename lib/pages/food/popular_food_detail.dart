@@ -1,25 +1,38 @@
-// ignore_for_file: prefer_const_constructors, sort_child_properties_last
+// ignore_for_file: prefer_const_constructors, sort_child_properties_last, prefer_interpolation_to_compose_strings, must_be_immutable
 
 // import 'dart:html';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter_application_1/controller/cart_controller.dart';
+import 'package:flutter_application_1/controller/popular_product_controller.dart';
+import 'package:flutter_application_1/pages/cart/cart_page.dart';
+import 'package:flutter_application_1/pages/home/main_food_page.dart';
+import 'package:flutter_application_1/utils/app_constants.dart';
 import 'package:flutter_application_1/utils/dimensions.dart';
 import 'package:flutter_application_1/widgets/app_column.dart';
 import 'package:flutter_application_1/widgets/app_icon.dart';
 import 'package:flutter_application_1/widgets/expandable_text_widget.dart';
+import 'package:get/get.dart';
 
 import '../../utils/colors.dart';
 import '../../widgets/big_text.dart';
-import '../../widgets/icons_and_text_widget.dart';
-import '../../widgets/small_text.dart';
+
 
 class PopularFoodDetail extends StatelessWidget {
-  const PopularFoodDetail({super.key});
+  int pageId;
+
+  PopularFoodDetail({
+    Key? key,
+    required this.pageId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    var product =
+        Get.find<PopularProductController>().popularProductList[pageId];
+    Get.find<PopularProductController>()
+        .initProduct(product, Get.find<CartController>());
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -33,7 +46,9 @@ class PopularFoodDetail extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: AssetImage("assets/images/food1.jpg"),
+                  image: NetworkImage(AppConstants.BASE_URL +
+                      AppConstants.UPLOAD_URL +
+                      product.img!),
                 ),
               ),
             ),
@@ -45,8 +60,53 @@ class PopularFoodDetail extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                AppIcon(icon: Icons.arrow_back_ios),
-                AppIcon(icon: Icons.shopping_cart_checkout_outlined),
+                GestureDetector(
+                  onTap: () {
+                    Get.to(
+                      () => MainFoodPage(),
+                    );
+                  },
+                  child: AppIcon(icon: Icons.arrow_back_ios),
+                ),
+                GetBuilder<PopularProductController>(
+                  builder: (controller) {
+                    return Stack(
+                      children: [
+                        GestureDetector(
+                            onTap: () {
+                              Get.to(() => CartPage());
+                            },
+                            child: AppIcon(
+                                icon: Icons.shopping_cart_checkout_outlined)),
+                        Get.find<PopularProductController>().totalItems >= 1
+                            ? Positioned(
+                                top: 0,
+                                right: 0,
+                                child: AppIcon(
+                                  icon: Icons.circle,
+                                  size: 20,
+                                  iconColor: Colors.transparent,
+                                  backgroundColor: AppColors.mainColor,
+                                ),
+                              )
+                            : Container(),
+                        Get.find<PopularProductController>().totalItems >= 1
+                            ? Positioned(
+                                top: 4,
+                                right: 4,
+                                child: BigText(
+                                  text: Get.find<PopularProductController>()
+                                      .totalItems
+                                      .toString(),
+                                  size: 12,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Container(),
+                      ],
+                    );
+                  },
+                )
               ],
             ),
           ),
@@ -73,7 +133,7 @@ class PopularFoodDetail extends StatelessWidget {
                 // ignore: prefer_const_literals_to_create_immutables
                 children: [
                   AppColumn(
-                    text: 'Bitter Juicy Chicken',
+                    text: product.name!,
                   ),
                   SizedBox(
                     height: Dimesions.height20,
@@ -84,9 +144,7 @@ class PopularFoodDetail extends StatelessWidget {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
-                      child: ExpandableTextWidget(
-                          text:
-                              'Chicken is delectable white meat and is one of the most common types of poultry in the world. Chicken meat is most preferred throughout different cuisines around the world. It provides essential vitamins mainly from the B complex including Niacin or vitamin B3, which is essential for the metabolism of fats in the body. It is lean meat with rich nutritional value, it is a great supply of protein which is important for sustaining our muscles. Chicken meat is largely used across most continents and is used to make a variety of dishes. One such dish is Butter Chicken Recipe or Murgh Makhani, which has become an inseparable part of Indian cuisine. It is one of the popular chicken curries that you can easily find around the world. Its popularity can also be understood by the fact that today several variations of this dish have come into existence. '),
+                      child: ExpandableTextWidget(text: product.description!),
                     ),
                   ),
                 ],
@@ -95,71 +153,91 @@ class PopularFoodDetail extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        height: Dimesions.height120,
-        padding: EdgeInsets.only(
-          top: Dimesions.height30,
-          bottom: Dimesions.height30,
-          left: Dimesions.width20,
-          right: Dimesions.width20,
-        ),
-        decoration: BoxDecoration(
-          color: AppColors.buttonBackgroundColor,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(Dimesions.radius20 * 2),
-            topRight: Radius.circular(Dimesions.radius20 * 2),
-          ),
-        ),
-        child:
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Container(
+      bottomNavigationBar: GetBuilder<PopularProductController>(
+        builder: (popularProduct) {
+          return Container(
+            height: Dimesions.height120,
             padding: EdgeInsets.only(
-              top: Dimesions.height20,
-              bottom: Dimesions.height20,
+              top: Dimesions.height30,
+              bottom: Dimesions.height30,
               left: Dimesions.width20,
               right: Dimesions.width20,
             ),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(Dimesions.radius20),
-              color: Colors.white,
+              color: AppColors.buttonBackgroundColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(Dimesions.radius20 * 2),
+                topRight: Radius.circular(Dimesions.radius20 * 2),
+              ),
             ),
             child: Row(
-              children: [
-                Icon(
-                  Icons.remove,
-                  color: AppColors.signColor,
-                ),
-                SizedBox(
-                  width: Dimesions.width10 / 2,
-                ),
-                BigText(text: '0'),
-                SizedBox(
-                  width: Dimesions.width10 / 2,
-                ),
-                Icon(
-                  Icons.add,
-                  color: AppColors.signColor,
-                )
-              ],
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(
-              top: Dimesions.height20,
-              bottom: Dimesions.height20,
-              left: Dimesions.width20,
-              right: Dimesions.width20,
-            ),
-            child: BigText(
-              text: '\$10 | Add to cart',
-              color: Colors.white,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(Dimesions.radius20),
-              color: AppColors.mainColor,
-            ),
-          ),
-        ]),
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Container(
+                    padding: EdgeInsets.only(
+                      top: Dimesions.height20,
+                      bottom: Dimesions.height20,
+                      left: Dimesions.width20,
+                      right: Dimesions.width20,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(Dimesions.radius20),
+                      color: Colors.white,
+                    ),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            popularProduct.setQuantity(false);
+                          },
+                          child: Icon(
+                            Icons.remove,
+                            color: AppColors.signColor,
+                          ),
+                        ),
+                        SizedBox(
+                          width: Dimesions.width10 / 2,
+                        ),
+                        BigText(text: popularProduct.inCartItems.toString()),
+                        SizedBox(
+                          width: Dimesions.width10 / 2,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            popularProduct.setQuantity(true);
+                          },
+                          child: Icon(
+                            Icons.add,
+                            color: AppColors.signColor,
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      popularProduct.addItem(product);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        top: Dimesions.height20,
+                        bottom: Dimesions.height20,
+                        left: Dimesions.width20,
+                        right: Dimesions.width20,
+                      ),
+                      child: BigText(
+                        text: '₹ ${product.price!} | Add to cart',
+                        color: Colors.white,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(Dimesions.radius20),
+                        color: AppColors.mainColor,
+                      ),
+                    ),
+                  ),
+                ]),
+          );
+        },
       ),
     );
   }

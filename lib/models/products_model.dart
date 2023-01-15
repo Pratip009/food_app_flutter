@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field, unnecessary_this
+
 class Products {
   int? _totalSize;
   int? _typeId;
@@ -23,7 +25,7 @@ class Products {
     if (json['products'] != null) {
       _products = <ProductsModel>[];
       json['products'].forEach((v) {
-        _products!.add(ProductsModel.fromJson(v));
+        _products.add(ProductsModel.fromJson(v));
       });
     }
   }
@@ -32,6 +34,8 @@ class Products {
 class ProductsModel {
   int? id;
   String? name;
+  String? time;
+  String? distance;
   String? description;
   int? price;
   int? stars;
@@ -44,6 +48,8 @@ class ProductsModel {
   ProductsModel(
       {this.id,
       this.name,
+      this.time,
+      this.distance,
       this.description,
       this.price,
       this.stars,
@@ -56,6 +62,8 @@ class ProductsModel {
   ProductsModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
+    time = json['time'];
+    distance = json['distance'];
     description = json['description'];
     price = json['price'];
     stars = json['stars'];

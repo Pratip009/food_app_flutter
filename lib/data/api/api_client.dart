@@ -1,5 +1,6 @@
+// ignore_for_file: unused_field
+
 import 'package:flutter_application_1/utils/app_constants.dart';
-import 'package:flutter_application_1/utils/colors.dart';
 import 'package:get/get.dart';
 
 class ApiClient extends GetConnect implements GetxService {
@@ -9,7 +10,7 @@ class ApiClient extends GetConnect implements GetxService {
 
   ApiClient({required this.appBseUrl}) {
     baseUrl = appBseUrl;
-    timeout = Duration(seconds: 30);
+    timeout = const Duration(seconds: 30);
     token = AppConstants.TOKEN;
 
     _mainHeaders = {
